@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>溪雨观消费单</title>
+<meta name="format-detection" content="telephone=no, address=no">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link href="./resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="./resource/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<style>
+*{font-size:10px;}
+</style>
+<style media="print">
+.Noprint
+{
+    display: none;
+}
+.PageNext
+{
+    page-break-after: always;
+}
+</style>
+
+<OBJECT classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" height="0" id="WebBrowser3" width="0" VIEWASTEXT>
+</OBJECT>
+<center>
+<a class="Noprint btn btn-success" onclick="print()">打印</a>
+<br>
+<img src="/attachment/images/1/2016/08/ELv48l461NA17lOi876LoA6Z8AAV4r.jpg" alt="" class="img-rounded" style="width:30%">
+<h2>溪雨观酸菜鱼(惠南店)
+<br>
+结账单
+</h2>
+</center>
+<div style="">
+<h3>桌号：{$tableinfo['zone']}-{$tableinfo['id']}</h3>
+订单号：{$orderinfo['ordersn']}  <br>
+收银员： {$user['realname']}
+<br>
+消费时间： {php echo date("Y-m-d H:i",$orderinfo['dateline'])}
+</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>品名</th>
+            <th>价格</th>
+            <th>数量</th>
+            <th>金额</th>
+        </tr>
+    </thead>
+    <tbody>
+    {php $i=1;}
+    {loop $order_goods $item}
+    <tr>
+        <th scope="row">{php echo $i}</th>
+        <th>{$item['title']}{if $item['flavor']!=""}({$item['flavor']}){/if}
+       {if $item['type']==1}- 送{/if} 
+       {if $item['type']==2}- 退{/if} 
+        </th>
+        <td>{$item['price']}</td>
+        <td> {$item['total']}</td>
+        <td>{php echo round($item['ttprice'],2);}</td>
+    </tr>
+    {php $i++}
+    {/loop}
+ </tbody>
+
+</table>
+<hr>
+消费金额: {$orderinfo['totalprice']}
+<br>
+折扣金额: {$orderinfo['zhekou']}
+<h3>应收金额: {$orderinfo['ys']}</h3>
+<table class="table">
+    <tr>
+        <td>人民币</td>
+        <td>付款:{$orderinfo['ys']}
+</td>
+    </tr>
+    <tr>
+        <td>找零：0.00</td>
+        <td>实付:{$orderinfo['ys']}
+</td>
+    </tr>
+    <tr>
+        <td colspan="2"> 凭证号： </td>
+    </tr>
+    <tr>
+        <td colspan="2"> 收银方式： 
+            <style>input[type=radio], input[type=checkbox]{margin:10px}</style>
+         现金  <input type="checkbox">  | 
+         银行卡  <input type="checkbox">  | 
+         网购券  <input type="checkbox">   | 
+         微信 <input type="checkbox">   | 
+         支付宝 <input type="checkbox">  | 
+         抵用券 <input type="checkbox">    
+ </td>
+    </tr>
+</table>
+服务员签名：
+<hr>
+公司名称：上海蒂昶实业有限公司  <br>
+公司官网：www.dichangshiye.com   <br>
+战略合作热线：400-921-0779   <br>
+总部地址:上海市浦东新区般三公路 (上海野生动物员地铁站旁)
+<div class="checkbox">
+        <label>
+       </label>
+      </div>
+<center>
+    微信扫描加入会员，积分免费换购商品！ <br>
+<img src="{MODULE_URL}template/img/qrcode.png" alt="" style="width:300px;height:300px">
+<br>
+<br>
+<br>
+</center>
+<script>
+//window.print();//自动打印:
+</script>
+
+</body>
+</html>

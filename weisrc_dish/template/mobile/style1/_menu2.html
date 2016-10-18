@@ -1,0 +1,58 @@
+<style>
+.orders-index-page .name {
+    font-size: 24px;
+    font-weight: 700;
+}
+</style>
+<div class="ddb-nav-footer ng-scope" common-footer="">
+	<!-- <a class="nav-item {if $cur_nave=='home'}active{/if}" href="{php echo $this->createMobileUrl('waprestlist', array(), true)}"><i class="fa fa-home"></i>
+		<div class="nav-text">所有</div>
+	</a -->
+	
+    <!-- 服务员 -->
+	<!-- <a class="nav-item ng-scope {if $cur_nave=='search'}active{/if}"  href="index.php?i=1&c=entry&do=fish&m=weisrc_dish"><i class="fa fa-eye"></i> -->
+		<!-- <div class="nav-text">鱼</div> -->
+	<!-- </a> -->
+	<!-- <a class="nav-item"  href="index.php?i=1&c=entry&do=lencai&m=weisrc_dish"> -->
+		<!-- <i class="fa fa-star"></i> -->
+		<!-- <div class="nav-text">冷菜间</div> -->
+	<!-- </a> -->
+	<!-- <a class="nav-item" href="index.php?i=1&c=entry&do=peicai&m=weisrc_dish"><i class="fa fa-list"></i> -->
+		<!-- <div class="nav-text">配菜间</div> -->
+	<!-- </a> -->
+	<a class="nav-item" href="index.php?i=1&c=entry&do=opera&m=weisrc_dish"><i class="fa fa-user"></i>
+		<div class="nav-text">上菜列表</div>
+	</a>
+
+        {if $_SESSION['pcate']==4}
+        <!-- 仅服务员可见 -->
+        <a class="nav-item" onclick="qrcode()"><i class="fa fa-qrcode"></i>
+            <div class="nav-text">扫一扫</div>
+        </a>
+        {/if}
+
+</div>
+<style type="text/css">
+	.danger{background: #f2dede}
+	.warming{background:#fcf8e3 }
+	.blue{background:#000!important;color:#fff!important; }
+</style>
+<script>
+function qrcode(){
+var FNScanner = api.require('FNScanner');
+FNScanner.openScanner({
+    autorotation: true
+}, function(ret, err){        
+    if( ret ){
+        var url = ret.content;
+        //alert(url);
+        if(url != undefined){
+            window.location.href=url;
+            //alert('跳转');
+        }
+    }else{
+        //alert( JSON.stringify( err ) );
+    }
+});
+}
+</script>

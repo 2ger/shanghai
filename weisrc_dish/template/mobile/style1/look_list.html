@@ -1,0 +1,62 @@
+<html ng-app="diandanbao" class="ng-scope"><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta content="telephone=no" name="format-detection">
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<meta content="production" name="env">
+<title>菜单列表</title>
+<link data-turbolinks-track="true" href="{RES}/mobile/{php echo $this->cur_tpl}/assets/diandanbao/weixin.css?v=1" media="all" rel="stylesheet">
+<style type="text/css">@media screen{.smnoscreen {display:none}} @media print{.smnoprint{display:none}}</style></head>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+<body>
+
+<div ng-view="" style="height: 100%;" class="ng-scope">
+    <div class="ddb-nav-header ng-scope" common-header="">
+
+        <a class="nav-left-item" href="{php echo $this->createMobileUrl('orderall', array(), true)}"><div class="operation-button red">查看所有</div></a>
+        <div class="header-title ng-binding">{$title}菜单列表</div>
+        <a class="nav-right-item" href="{php echo $this->createMobileUrl('login', array(), true)}">
+            <div class="operation-button red">退出</div>
+        </a>
+       
+       
+    </div>
+
+    <!-- 底部菜单 -->
+    {php include $this->template($this->cur_tpl.'/_menu2');}
+<style type="text/css">
+.pure-table{width:100%;}
+.pure-table td{padding:2px;background: #fff;}
+
+</style>
+    <div class="orders-index-page main-view ng-scope" id="delivery-orders-index">
+        <table class="pure-table pure-table-bordered" width="100%">
+            <tr>
+                <th>#</th>
+                <th>菜名</th>
+                <th width="5px">数量</th>
+                <th width="20px">单价</th>
+                <th width="50px">总价</th>
+             </tr>
+             {php $i=1;}
+        {loop $list $item}
+             <tr>
+                <td>{php echo $i}</td>
+                <td>{$item['title']}</td>
+                <td>{$item['total']}</td>
+                <td>{$item['price']}</td>
+                <td>{$item['oneprice']}元</td>
+            </tr>
+            {php $i++}
+        {/loop}
+<tr>
+                <td></td>
+                <td></td>
+                <td colspan="2">总金额</td>
+                <td>{$totalprice['totalprice']}元</td>
+             </tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
