@@ -291,7 +291,7 @@ function checkUpdate(){
     <div class="panel-heading">{$tableinfo['zone']}--{$tableinfo['id']} 号桌菜单列表 {$orderid['id']}
                     
 
-                       <a class="btn btn-sm btn-info pull-right" style="margin-top:-5px;" href="{php echo $this->createMobileUrl('print', array('tablesid' => $tablesid))}" target="_blank">打印菜单</a> 
+                       <a class="btn btn-sm btn-info pull-right" style="margin-top:-5px;" href="{php echo $this->createMobileUrl('print', array('orderid' => $orderid['id'],'tablesid' => $tablesid))}" target="_blank">打印菜单</a> 
                         {if $orderid['id']!=""}
                         <a class="btn btn-sm btn-success pull-right" style="margin-top:-5px; margin-right:5px;" href="{php echo $this->createMobileUrl('confirmorder', array('orderid' => $orderid['id']))}">确认订单</a>
                         {/if}
