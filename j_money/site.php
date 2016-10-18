@@ -40,14 +40,14 @@ class J_moneyModuleSite extends WeModuleSite {
 			 pdo_update("weisrc_dish_order_goods",array("type"=>2),array("orderid"=>$orderid,"goodsid"=>$goodsid));
 			// $type=pdo_fetch("update ims_weisrc_dish_order_goods set type =1 where orderid = ".$orderid." and goodsid=".$goodsid);
             // 订单表 金额 
-            $orderprice =pdo_fetch("select totalprice from ims_weisrc_dish_order where id=".$orderid);
-            $price = $orderprice['totalprice']-$price;
-            if($price<0){
-            $price =0;
-            }
-			// pdo_update("weisrc_dish_order",array("zhekou"=>$price),array("id"=>$orderid));
-			pdo_update("weisrc_dish_order",array("totalprice"=>$price),array("id"=>$orderid));
-            die(json_encode(array("success"=>true)));
+            $totalprice = pdo_fetch("select sum(price*total) from ims_weisrc_dish_order_goods where type =0  and orderid=".$orderid);
+            // $orderprice =pdo_fetch("select totalprice from ims_weisrc_dish_order where id=".$orderid);
+            // $price = $orderprice['totalprice']-$price;
+            // if($price<0){
+            // $price =0;
+            // }
+			pdo_update("weisrc_dish_order",array("totalprice"=>$totalprice),array("id"=>$orderid));
+            die(json_encode(array("success"=>true,"totalprice"=>$totalprice)));
         }
         //退菜  end
 
@@ -1800,21 +1800,26 @@ class J_moneyModuleSite extends WeModuleSite {
                 //桌号
                     $tableinfo=pdo_fetch("SELECT t.title as id,z.title as zone from ".tablename('weisrc_dish_tables')." t left join ".tablename('weisrc_dish_tablezones')." z on t.tablezonesid = z.id WHERE t.id=".$tablesid);
                //列出该桌号的所有菜 
-                    $order_goods=pdo_fetchall("SELECT a.title,b.type,b.orderid,b.goodsid,b.total,b.price,(b.total*b.price) as ttprice,b.taste as flavor from ".tablename('weisrc_dish_order_goods')." as b join ".tablename('weisrc_dish_goods')." as a on a.id=b.goodsid WHERE (b.status=0 or b.status=1) and b.tablesid=".$tablesid);
-                    if(empty($order_goods)){
+                    $order_goods=pdo_fetchall("SELECT a.title,b.type,b.orderid,b.goodsid,b.total,b.price,(b.total*b.price) as ttprice,b.taste as flavor from ".tablename('weisrc_dish_order_goods')." as b join ".tablename('weisrc_dish_goods')." as a on a.id=b.goodsid WHERE (b.status=0 or b.status=1) and b.orderid=".$orderid);
+                    if(empty($order_goods)){//未下单，则从购购车获得
                     	$order_goods=pdo_fetchall("SELECT a.title,b.total,b.price,(b.total*b.price) as ttprice,b.taste as flavor from ".tablename('weisrc_dish_cart')." as b join ".tablename('weisrc_dish_goods')." as a on a.id=b.goodsid WHERE b.tablesid=".$tablesid." group by b.goodsid");
                     }
                     // $order_goods['ttprice']= round($order_goods['ttprice'] ,2);
                // 所有消费
-                    $xiaofei=pdo_fetch("SELECT sum(total*price) as total from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and tablesid=".$tablesid);//所有消费金额
+                    $xiaofei=pdo_fetch("SELECT sum(total*price) as total from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and type !=2 and tablesid=".$tablesid);//所有消费金额
+                    //应收：非退，送菜总金额
+                    $ys=pdo_fetch("SELECT sum(total*price) as total from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and type =0 and orderid=".$orderid);//所有消费金额
+                    $song=pdo_fetch("SELECT sum(total*price) as total from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and type =1 and orderid=".$orderid);//送菜金额
 
-                    $dazp=pdo_fetch("SELECT price from ".tablename('weisrc_dish_order_goods')." WHERE status =1 and taste='大转盘' and tablesid=".$tablesid);//大转盘抵消金额
+                    $dazp=pdo_fetch("SELECT price from ".tablename('weisrc_dish_order_goods')." WHERE status =1 and taste='大转盘' and type=0 and orderid=".$orderid);//大转盘抵消金额
 
                    $xiaofei['total1']= round($xiaofei['total'],2);//所有消费金额保留两位小数
                    $xiaofei['total']= round($xiaofei['total'],0);//所有消费取整数
-                   $zhaocha=pdo_fetch("SELECT price from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and taste='找茬' and tablesid=".$tablesid);//找茬抵消金额
+                   $xiaofei['ys']= round($ys['total'],0);//所有消费取整数
+                   $xiaofei['song']= round($song['total'],2);//所有消费金额保留两位小数
+                   $zhaocha=pdo_fetch("SELECT price from ".tablename('weisrc_dish_order_goods')." WHERE (status =0 or status =1) and taste='找茬' and orderid=".$orderid);//找茬抵消金额
                    $dixiao=abs($dazp['price']+$zhaocha['price']);//抵消差
-                   $buzhekou=pdo_fetch("SELECT sum(a.price) as price from ims_weisrc_dish_order_goods as a join ims_weisrc_dish_goods as b on a.goodsid=b.id WHERE (a.status =0 or a.status =1) and (b.pcate=8 or b.pcate=10) and a.tablesid=".$tablesid);//酒水饮料+飞饼的消费价格
+                   $buzhekou=pdo_fetch("SELECT sum(a.price) as price from ims_weisrc_dish_order_goods as a join ims_weisrc_dish_goods as b on a.goodsid=b.id WHERE (a.status =0 or a.status =1) and (b.pcate=8 or b.pcate=10) and a.type=0 and a.orderid=".$orderid);//酒水饮料+飞饼的消费价格
                    $kedazhe=$xiaofei['total']-$buzhekou['price'];//可折扣价格
 
                    // var_dump($buzhekou);

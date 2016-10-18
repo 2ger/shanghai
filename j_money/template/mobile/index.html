@@ -526,16 +526,16 @@ if(isman< 0){
                         <div class="panel-heading">
                             <div class="input-group"> 
                                 <span class="input-group-addon" id="sizing-addon2">￥</span>
-                                <input type="text" name="fee" id="fee" value="{$xiaofei['total']}" maxlength="8" class="form-control" style="line-height:60px; height:60px; font-size:40px; padding-top:10px; text-align:right" readonly/>
+                                <input type="text" name="fee" id="fee" value="{$xiaofei['ys']}" maxlength="8" class="form-control" style="line-height:60px; height:60px; font-size:40px; padding-top:10px; text-align:right" readonly/>
                                 <span class="input-group-addon" id="sizing-addon2">元</span> </div>
                             <table class="table table-condensed">
                                 <tr>
                                     <td>消费： 
                                         <span id="xf">{$xiaofei["total0"]} </span> 元 </td>
                                     <td>总折扣： 
-                                        <span id="zhekou">0.00</span> 元  </td>
+                                        <span id="zhekou">{$xiaofei["song"]}</span> 元  </td>
                                     <td>应收：
-                                        <span id="ys">{$xiaofei["total1"]}</span> 元  </td>
+                                        <span id="ys">{$xiaofei["ys"]}</span> 元  </td>
                                 </tr>
                                 <tr>
                                     <td>低消差：  
@@ -551,7 +551,7 @@ if(isman< 0){
                                     <td>满减： 
                                         <span id="mj">0.00</span> 元  </td>
                                     <td>待收： 
-                                        <span id="ds">{$xiaofei["total"]}</span>元  </td>
+                                        <span id="ds">{$xiaofei["ys"]}</span>元  </td>
                                 </tr>
                             </table>
                         </div>
