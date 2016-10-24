@@ -231,13 +231,13 @@ function checkUpdate(){
                 <td scope="row">活杀黑鱼</td>
                 <td>
                     <div class="input-group">
-                        <input class="form-control" size="2" name="oneprice" type="text" placeholder="" value="42">
+                        <input class="form-control" size="2" name="oneprice" type="number" placeholder="" value="42">
                         <div class="input-group-addon">/元</div>
                     </div>
                 </td>
                 <td>
                     <div class="input-group">
-                        <input class="form-control" name="weight" size="2" type="text" placeholder="输入重量" value="1">
+                        <input class="form-control" name="weight" size="2" type="number" placeholder="输入重量" value="1">
                         <div class="input-group-addon">斤</div>
                     </div>
                 </td>
@@ -259,13 +259,13 @@ function checkUpdate(){
                 <td scope="row">特殊菜</td>
                 <td>
                     <div class="input-group">
-                        <input class="form-control" size="2" name="oneprice1" type="text" placeholder="请输入价格" value="1">
+                        <input class="form-control" size="2" name="oneprice1" type="number" placeholder="请输入价格" value="1">
                         <div class="input-group-addon">/元</div>
                     </div>
                 </td>
                 <td>
                     <div class="input-group">
-                        <input class="form-control" name="weight1" size="2" type="text" placeholder="输入份数" value="1">
+                        <input class="form-control" name="weight1" size="2" type="number" placeholder="输入份数" value="1">
                         <div class="input-group-addon">份</div>
                     </div>
                 </td>
@@ -291,9 +291,10 @@ function checkUpdate(){
     <div class="panel-heading">{$tableinfo['zone']}--{$tableinfo['id']} 号桌菜单列表 {$orderid['id']}
                     
 
-                       <a class="btn btn-sm btn-info pull-right" style="margin-top:-5px;" href="{php echo $this->createMobileUrl('print', array('orderid' => $orderid['id'],'tablesid' => $tablesid))}" target="_blank">打印菜单</a> 
                         {if $orderid['id']!=""}
-                        <a class="btn btn-sm btn-success pull-right" style="margin-top:-5px; margin-right:5px;" href="{php echo $this->createMobileUrl('confirmorder', array('orderid' => $orderid['id']))}">确认订单</a>
+                       <a class="btn btn-sm btn-info pull-right" style="margin-top:-5px;" href="{php echo $this->createMobileUrl('print', array('orderid' => $orderid['id'],'tablesid' => $tablesid))}" target="_blank">打印菜单</a> 
+                        <a class="btn btn-sm btn-danger pull-right" style="margin-top:-5px; margin-right:5px;" href="{php echo $this->createMobileUrl('cancelorder', array('orderid' => $orderid))}">取消订单</a>
+                        <a class="btn btn-sm btn-success pull-right" style="margin-top:-5px; margin-right:5px;" href="{php echo $this->createMobileUrl('confirmorder', array('orderid' => $orderid))}">确认订单</a>
                         {/if}
                         </div>
                         <div class="panel-body table-responsive">
@@ -446,7 +447,7 @@ $('.song').click(function(){
                                     </td>
                                     <td>
                                         <div class="input-group">
-                                            <input class="form-control" id="daijinnum" size="1" type="text" placeholder="输入数量" value="1">
+                                            <input class="form-control" id="daijinnum" size="1" type="number" placeholder="输入数量" value="1">
                                             <div class="input-group-addon">张</div>
                                         </div>
                                     </td>
@@ -526,16 +527,16 @@ if(isman< 0){
                         <div class="panel-heading">
                             <div class="input-group"> 
                                 <span class="input-group-addon" id="sizing-addon2">￥</span>
-                                <input type="text" name="fee" id="fee" value="{$xiaofei['ys']}" maxlength="8" class="form-control" style="line-height:60px; height:60px; font-size:40px; padding-top:10px; text-align:right" readonly/>
+                     <input type="text" name="fee" id="fee" value="{if $xiaofei['ys']!=''}{$xiaofei['ys']}{else}0{/if}" maxlength="8" class="form-control" style="line-height:60px; height:60px; font-size:40px; padding-top:10px; text-align:right" readonly/>
                                 <span class="input-group-addon" id="sizing-addon2">元</span> </div>
                             <table class="table table-condensed">
                                 <tr>
                                     <td>消费： 
-                                        <span id="xf">{$xiaofei["total0"]} </span> 元 </td>
+                                        <span id="xf">{if $xiaofei["total0"]!=""}{$xiaofei["total0"]}{else}0.00{/if}</span> 元 </td>
                                     <td>总折扣： 
-                                        <span id="zhekou">{$xiaofei["song"]}</span> 元  </td>
+                                        <span id="zhekou">{if $xiaofei["song"]!=""}{$xiaofei["song"]}{else}0.00{/if}</span> 元  </td>
                                     <td>应收：
-                                        <span id="ys">{$xiaofei["ys"]}</span> 元  </td>
+                                        <span id="ys">{if $xiaofei["ys"]!=""}{$xiaofei["ys"]}{else}0.00{/if}</span> 元  </td>
                                 </tr>
                                 <tr>
                                     <td>低消差：  
@@ -687,7 +688,14 @@ if(isman< 0){
                                     {php $title = '空闲';}
                                     {elseif $item['status']==1}
                                     {php $status = 'opened';}
+
+                                    {if $item['totalprice']['totalprice']>0}
                                     {php $title = '已开台';}
+                                    {else}
+                                    {php $status = 'ordered';}
+                                    {php $title = '有订单';}
+                                    {/if}
+
                                     {elseif $item['status']==2}
                                     {php $status = 'ordered';}
                                     {php $title = '已下单';}
@@ -703,7 +711,11 @@ if(isman< 0){
                                             <span>{$item['type']['title']}--{$item['title']}</span>
                                             <div style="height: 60px;line-height:28px">
                                                 {if $item['status']>=1}
+                                    {if $item['totalprice']['totalprice']>0}
                                                 {$item['totalprice']['totalprice']}元
+                                    {else}
+                                              <div class="text-danger">有未确认订单 </div> 
+                                    {/if}
                                                 <form action="index.php?i=1&c=entry&op=changetable&do=index&m=j_money&tablesid={$item['id']}&status={$item['status']}" method="post" name="form1">
                                                     <span style="color: green;">转至</span>
                                                     <select id="change" name="change" onchange="$(this.form).submit();"">
@@ -916,7 +928,7 @@ function payMobile(){
         swal({// 用户支付   16.9.14  
             title: "{$tableinfo['zone']}--{$tableinfo['id']} 客户买单",   
             text: "收款金额为<span style='color:#F00'>￥"+temp+"元</span>            <br>            收款方式 :<span id='paytype'></span> <br> "+btns,   
-            type: "info",
+            type: "input",
             html:true,
             showLoaderOnConfirm: true,
             showCancelButton: true,   
@@ -973,6 +985,7 @@ function paytype(i){
     }
     $("#paytype").html(str);
     $("#payno").val(temp);
+    $("[tabindex='3']").val(i);//取得授权密码
 }
 
 //付款
@@ -1302,7 +1315,7 @@ function checkCard(){
         type: "input",
         html:true,
         showLoaderOnConfirm: true,
-        showCancelButton: true,   
+        showCancelButton: false,   
         closeOnConfirm: false,
         confirmButtonText: "确认打折",
         cancelButtonText: "关闭",  
@@ -1389,20 +1402,31 @@ function discount(i){
         function(inputValue){   
                     var owner =  inputValue;//取得授权账号
                     var ownerpwd =  $("[tabindex='3']").val();//取得授权密码
-                    if (inputValue === false) return false;
+                    // if (inputValue === false) return false;
+                    if (inputValue === false) { //取消
+        				 i =10;
+                         if(buzekou>0){// 如果有不可打折的，先减掉，再打折
+                                //total = ds-buzekou;
+                                $("#fee").val((total*i/10+buzekou).toFixed(0));
+                                $("#ds").html((total*i/10+buzekou).toFixed(0));
+                            }else{
+                             $("#fee").val((total*i/10).toFixed(0));
+                             $("#ds").html((total*i/10).toFixed(0)); 
+                         }
+                         // alert(total*i/10+buzekou);
+                         $("#zhekou").html((total-(total*i/10)+daijinquan+manjian).toFixed(0));
+        				return false
+        			};  
                     if (owner !== "" && ownerpwd !="") {   
 
                     //判断 及 打折
                     $.post("{php echo $this->createMobileUrl('ajax',array('op'=>'souquan'))}",{"owner":owner,"ownerpwd":ownerpwd},function(data){
                      console.log(data);
-
                      var temp=eval("("+data+")");
-                   //  alert(data);
-                     if(temp.success){
+                    if(temp.success){
                         swal("授权成功");
-
                     }else{
-                        i =10;
+                       	 i =10;
                          if(buzekou>0){// 如果有不可打折的，先减掉，再打折
                                 //total = ds-buzekou;
                                 $("#fee").val((total*i/10+buzekou).toFixed(0));
@@ -1415,10 +1439,10 @@ function discount(i){
                          $("#zhekou").html((total-(total*i/10)+daijinquan+manjian).toFixed(0));
 
                         swal("账号密码错误！");
-                         
-
                          return false;
                     }
+
+        			
                 });
                 }else{
                     swal.showInputError("请输入授权账号!");

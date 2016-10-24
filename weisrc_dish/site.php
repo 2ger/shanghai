@@ -2993,17 +2993,18 @@ if ($logid =='') {
    message('未登录', $urll, 'success');
 }
 
-$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,c.title as sortname,d.title as tablesname,a.taste as flavor FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and a.status=1 and (b.pcate = 1 and a.stepnow = 3) or(b.pcate = 6 and a.stepnow < 1) ");  //and a.stepnow= {$opera['step']}  and a.stepnow >0
+$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname,a.taste as flavor FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE ((b.pcate = 1 and a.stepnow = 0) or (b.pcate = 6 and a.stepnow < 1)) and a.weid = '{$weid}' and a.status=1 ");  //修改鱼步骤10.24.2016
         $nowtime = time();
         foreach ($list as $key => $value) {
             $list[$key]['totalprice'] = $list[$key]['total']*$list[$key]['price'];
-            $cha = $nowtime - $list[$key]['dateline'];
-            if ($cha >300 && $cha <600 && $value['reminder']==0) {
-                $list[$key]['status'] = "warming";
-            }elseif ($cha >600 && $value['reminder']==0) {
-                $list[$key]['status'] = "danger";
-            }elseif($value['reminder']==1){
-                $list[$key]['status'] = "blue";
+            $cha = $nowtime - $value['dateline'];
+            $list[$key]['category'] = pdo_fetch("select description from " . tablename($this->table_category) . " where id=".$value['pcate']);
+            $category = $list[$key]['category']['description']*60;
+
+            if ($cha >300 && $cha <$category && $value['reminder']==0) {
+                $list[$key]['change'] = "warming";
+            }elseif($value['reminder']==1 or $cha>$category){
+                $list[$key]['change'] = "blue";
             }
 
         }
@@ -3030,17 +3031,18 @@ if ($logid =='') {
    message('未登录', $urll, 'success');
 }
 
-$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,c.title as sortname,d.title as tablesname FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and b.pcate = 5  and a.stepnow < 1 and a.status=1 order by a.reminder desc,a.dateline");  //and a.stepnow= {$opera['step']}  and a.stepnow >0
+$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and b.pcate = 5  and a.stepnow < 1 and a.status=1 order by a.reminder desc,a.dateline");  //and a.stepnow= {$opera['step']}  and a.stepnow >0
         $nowtime = time();
         foreach ($list as $key => $value) {
             $list[$key]['totalprice'] = $list[$key]['total']*$list[$key]['price'];
             $cha = $nowtime - $list[$key]['dateline'];
-            if ($cha >300 && $cha <600 && $value['reminder']==0) {
-                $list[$key]['status'] = "warming";
-            }elseif ($cha >600 && $value['reminder']==0) {
-                $list[$key]['status'] = "danger";
-            }elseif($value['reminder']==1){
-                $list[$key]['status'] = "blue";
+             $list[$key]['category'] = pdo_fetch("select description from " . tablename($this->table_category) . " where id=".$value['pcate']);
+            $category = $list[$key]['category']['description']*60;
+
+            if ($cha >300 && $cha <$category && $value['reminder']==0) {
+                $list[$key]['change'] = "warming";
+            }elseif($value['reminder']==1 or $cha>$category){
+                $list[$key]['change'] = "blue";
             }
 
         }
@@ -3067,17 +3069,18 @@ if ($logid =='') {
    message('未登录', $urll, 'success');
 }
 
-$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,c.title as sortname,d.title as tablesname FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and (b.pcate = 4 or b.pcate = 3) and a.stepnow < 1 and a.status=1 order by a.reminder desc,a.dateline");  //and a.stepnow= {$opera['step']}  and a.stepnow >0
+$list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and (b.pcate = 4 or b.pcate = 3) and a.stepnow < 1 and a.status=1 order by a.reminder desc,a.dateline");  //and a.stepnow= {$opera['step']}  and a.stepnow >0
         $nowtime = time();
         foreach ($list as $key => $value) {
             $list[$key]['totalprice'] = $list[$key]['total']*$list[$key]['price'];
             $cha = $nowtime - $list[$key]['dateline'];
-            if ($cha >300 && $cha <600 && $value['reminder']==0) {
-                $list[$key]['status'] = "warming";
-            }elseif ($cha >600 && $value['reminder']==0) {
-                $list[$key]['status'] = "danger";
-            }elseif($value['reminder']==1){
-                $list[$key]['status'] = "blue";
+             $list[$key]['category'] = pdo_fetch("select description from " . tablename($this->table_category) . " where id=".$value['pcate']);
+            $category = $list[$key]['category']['description']*60;
+
+            if ($cha >300 && $cha <$category && $value['reminder']==0) {
+                $list[$key]['change'] = "warming";
+            }elseif($value['reminder']==1 or $cha>$category){
+                $list[$key]['change'] = "blue";
             }
 
         }
@@ -3149,6 +3152,41 @@ public function doMobileCaipin()
         // die();
         include $this->template($this->cur_tpl . '/caipin');
 }
+// 店长 权限 员工绩效
+public function doMobileJixiao()
+{
+        global $_W, $_GPC;
+        $logid = $_COOKIE['logid'];
+        if ($logid =='') {
+            $urll = 'index.php?i=1&c=entry&do=index&m=j_money';
+            message('未登录', $urll, 'success');
+        }
+        // 上月
+        $timeend=time();
+        $firstday=date('Y-m-01 H:i:s',strtotime(date('Y',$timeend).'-'.(date('m',$timeend)-1).'-01'));
+        $firstmonth=strtotime(date('Y-m-01 H:i:s',strtotime(date('Y',$timeend).'-'.(date('m',$timeend)-1).'-01')));
+        $lastmonth=strtotime(date('Y-m-d H:i:s',strtotime("$firstday +1 month -1 day")));
+        // 本月
+        $monthstart = mktime(0,0,0,date('m'),1,date('y'));
+
+        $user = pdo_fetch("SELECT u.*,g.companyname,g.description FROM ims_j_money_user as u left join ims_j_money_group as g ON u.pcate = g.id  WHERE u.useracount = :id", array(':id' => $logid));
+        $storeid = $user['storeid'];
+        $users = pdo_fetchall("SELECT storeid,useracount,realname from ims_j_money_user where storeid=".$storeid);
+        
+        foreach ($users as $key => $value) {
+            //上月
+            $users[$key]['normal']=pdo_fetch("select count(*) as normal from dashang where opera=0 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $firstmonth and $lastmonth");
+            $users[$key]['warning'] = pdo_fetch("select count(*) as warning from dashang where opera=1 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $firstmonth and $lastmonth");
+            $users[$key]['punish'] = pdo_fetch("select count(*) as punish from dashang where opera=-1 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $firstmonth and $lastmonth");
+            //本月
+            $users[$key]['normals']=pdo_fetch("select count(*) as normal from dashang where opera=0 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $monthstart and $timeend");
+            $users[$key]['warnings'] = pdo_fetch("select count(*) as warning from dashang where opera=1 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $monthstart and $timeend");
+            $users[$key]['punishs'] = pdo_fetch("select count(*) as punish from dashang where opera=-1 and man='".$value['realname']."' and storeid=".$value['storeid']." and timeline between $monthstart and $timeend");
+        }
+
+    
+        include $this->template($this->cur_tpl . '/jixiao');
+}
 //服务员
 public function doMobileOpera()
     {
@@ -3176,8 +3214,8 @@ if ($logid =='') {
 // var_dump($fish);
 
 if($opera['tablesid']==""){
-    $list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname,a.taste as flavor FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and a.status=1 and (b.pcate = 1 and a.stepnow = 4) or (b.pcate >1 and a.stepnow = 1) or (b.pcate = 7 and a.stepnow = 0) or (b.pcate = 8 and a.stepnow = 0) or (b.pcate = 9 and a.stepnow = 0) or (b.pcate = 10 and a.stepnow = 0) order by a.reminder desc,a.dateline");
-  //and a.stepnow= {$opera['step']}  and a.stepnow >0
+    $list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname,a.taste as flavor FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}' and a.status=1 and (b.pcate < 7 and a.stepnow = 1) or (b.pcate = 7 and a.stepnow = 0) or (b.pcate = 8 and a.stepnow = 0) or (b.pcate = 9 and a.stepnow = 0) or (b.pcate = 10 and a.stepnow = 0) order by a.reminder desc,a.dateline");
+  //修改鱼与其他菜品步骤相同10.24.2016
 }else{
     if($opp==""){
         $list = pdo_fetchall("SELECT a.*,b.thumb,b.title,b.pcate,c.title as sortname,d.title as tablesname,a.taste as flavor  FROM " . tablename($this->table_order_goods) . " as a left join  " . tablename($this->table_goods) . " as b on a.goodsid=b.id left join " . tablename($this->table_stores) . " as c on a.storeid=c.id left join " . tablename($this->table_tables) . " as d on a.tablesid=d.id  WHERE a.weid = '{$weid}'  and a.status=1 and b.id!=131 and b.id!=129 and a.tablesid=".$opera['tablesid']." order by stepnow ASC");  //and a.stepnow= {$opera['step']}
@@ -3206,14 +3244,13 @@ if($opera['tablesid']==""){
         foreach ($list as $key => $value) {
             $list[$key]['totalprice'] = $list[$key]['total']*$list[$key]['price'];
             $cha = $nowtime - $list[$key]['dateline'];
-            if ($cha >300 && $cha <600 && $value['reminder']==0) {
-                $list[$key]['status'] = "warming";
-            }elseif ($cha >600 && $value['reminder']==0) {
-                $list[$key]['status'] = "danger";
-            }elseif ($cha >1800 && $value['reminder']==0) {
-                $list[$key]['status'] = "blue";// 过了30分 变黑
-            }elseif($value['reminder']==1){
-                $list[$key]['status'] = "blue";// 服务员崔 变黑
+             $list[$key]['category'] = pdo_fetch("select description from " . tablename($this->table_category) . " where id=".$value['pcate']);
+            $category = $list[$key]['category']['description']*60;
+
+            if ($cha >300 && $cha <$category && $value['reminder']==0) {
+                $list[$key]['change'] = "warming";
+            }elseif($value['reminder']==1 or $cha>$category){
+                $list[$key]['change'] = "blue";
             }
 
         }
@@ -3454,16 +3491,50 @@ public function doMobileOperadetail()
 //按扫描次数判断操作
 if($_GPC['stepnow']==4){
     $resule = pdo_query("UPDATE " . tablename($this->table_order_goods) . " SET stepnow=5,".$step."=".time().",".$stepman."='".$ygname."' WHERE id=:id", array(':id' => $orderid));
+    if($resule){
+        $select = pdo_fetch("select storeid,tablesid,orderid,goodsid,step5man,step5,dateline from " . tablename($this->table_order_goods) . " where id=:id", array(':id' => $orderid));
+        $category = pdo_fetch("select b.description from ". tablename($this->table_goods) ." as a join " . tablename($this->table_category) . " as b on a.pcate=b.id where a.id=".$select['goodsid']);
+        $line = $select['step5']-$select['dateline'];
 
-}elseif($_GPC['stepnow']==0 && $_GPC['type']==1){
+        if($line<600){
+            $opera = 0;//正常
+        }else{
+            $opera = -1;//处分
+        }
+        
+        $inline = pdo_query("insert into dashang(storeid,tablesid,orderid,goodsid,man,timeline,opera) values(".$select['storeid'].",".$select['tablesid'].",".$select['orderid'].",".$select['goodsid'].",'".$select['step5man']."',".time().",".$opera.")");
+    
+    }
+
+}
+// elseif($_GPC['stepnow']==0 && $_GPC['type']==1){
+//     $resule = pdo_query("UPDATE " . tablename($this->table_order_goods) . " SET stepnow=1,".$step."=".time().",".$stepman."='".$ygname."' WHERE id=:id", array(':id' => $orderid));
+// }
+else{
     $resule = pdo_query("UPDATE " . tablename($this->table_order_goods) . " SET stepnow=1,".$step."=".time().",".$stepman."='".$ygname."' WHERE id=:id", array(':id' => $orderid));
-}else{
-    $resule = pdo_query("UPDATE " . tablename($this->table_order_goods) . " SET stepnow=stepnow+1,".$step."=".time().",".$stepman."='".$ygname."' WHERE id=:id", array(':id' => $orderid));
+    //判断煮菜时间是否合格10.24.2016
+    if($resule){
+        $select = pdo_fetch("select storeid,tablesid,orderid,goodsid,step1man,step1,dateline from " . tablename($this->table_order_goods) . " where id=:id", array(':id' => $orderid));
+        $category = pdo_fetch("select b.description from ". tablename($this->table_goods) ." as a join " . tablename($this->table_category) . " as b on a.pcate=b.id where a.id=".$select['goodsid']);
+        $line = $select['step1']-$select['dateline'];
+        $distance = $category['description']*60;
+
+        if($line<300){
+            $opera = 0;//正常
+        }elseif($line>300 && $line<$distance){
+            $opera = 1;//警告
+        }else{
+            $opera = -1;//处分
+        }
+        
+        $inline = pdo_query("insert into dashang(storeid,tablesid,orderid,goodsid,man,timeline,opera) values(".$select['storeid'].",".$select['tablesid'].",".$select['orderid'].",".$select['goodsid'].",'".$select['step1man']."',".time().",".$opera.")");
+    
+    }
 }
 
+
+
 $url = $_SERVER["HTTP_REFERER"];// 获得来路URL
-
-
  message('操作成功！', $url, 'success');
 
         // var_dump($stepman);
@@ -6282,6 +6353,7 @@ print_usr=:print_usr) AND storeid = :storeid {$condition} ORDER BY id DESC limit
         } elseif ($operation == 'post') {
             $parentid = intval($_GPC['parentid']);
             $id = intval($_GPC['id']);
+            $description = intval($_GPC['description']);
             if (!empty($id)) {
                 $category = pdo_fetch("SELECT * FROM " . tablename($this->table_category) . " WHERE id = '$id'");
             } else {
@@ -6307,6 +6379,7 @@ print_usr=:print_usr) AND storeid = :storeid {$condition} ORDER BY id DESC limit
                     'name' => $_GPC['catename'],
                     'displayorder' => intval($_GPC['displayorder']),
                     'parentid' => intval($parentid),
+                    'description' => intval($description),
                 );
 
                 if (empty($data['storeid'])) {

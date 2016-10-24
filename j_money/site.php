@@ -1604,9 +1604,14 @@ class J_moneyModuleSite extends WeModuleSite {
 		}
 		if(!empty($tablesid)){
 			$orderid = pdo_fetch('SELECT id from ims_weisrc_dish_order WHERE ispay = 0 and tables ='.$tablesid.' order by id desc limit 1');
-            $orderid = $orderid['id'];
-		}
-         
+            if(!empty($orderid)){
+                $orderid = $orderid['id'];
+            }else{
+                $orderid = -1;
+            }
+		}else{
+                $orderid = -1;
+            }
 		$operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
 		$cfg = $this->module['config'];
 		$start = strtotime("today");
@@ -1707,10 +1712,9 @@ class J_moneyModuleSite extends WeModuleSite {
 			$list = pdo_fetchall("SELECT * FROM ims_weisrc_dish_tables WHERE weid = '{$_W['uniacid']}' ORDER BY tablezonesid DESC, title ASC");
             foreach ($list as $key => $value) {
                 //未结账的订单总价
-                    $list[$key]['totalprice']= pdo_fetch("SELECT sum(price*total) as totalprice FROM  ims_weisrc_dish_order_goods WHERE tablesid = ".$value['id']." and status = 1");// 莫 9.21
+                    $list[$key]['totalprice']= pdo_fetch("SELECT sum(price*total) as totalprice FROM  ims_weisrc_dish_order_goods WHERE orderid = ".$orderid." and status = 1");// 莫 9.21
                     $list[$key]['totalprice']['totalprice']=round($list[$key]['totalprice']['totalprice'],1);
-                    // $list[$key]['totalprice']= pdo_fetch("SELECT totalprice FROM  ims_weisrc_dish_order  WHERE tables = ".$value['id']." order by id desc");//张 
-                    $list[$key]['snid'] = pdo_fetch("SELECT id FROM  ims_weisrc_dish_order  WHERE tables = ".$value['id']." order by id desc");
+                    $list[$key]['snid'] = pdo_fetch("SELECT id FROM  ims_weisrc_dish_order  WHERE id = ".$orderid." order by id desc");
                     $list[$key]['type']= pdo_fetch("SELECT title from ims_weisrc_dish_tablezones where id=".$value['tablezonesid']);
                 }
 			
@@ -1899,6 +1903,16 @@ $orderinfo['zhekou'] = $orderinfo['zhekou']+$song['total'];
         }
         include $this->template('print');
     }
+// 取消订单
+    public function doMobileCancelorder() {
+		global $_GPC, $_W;
+        $orderid = intval($_GPC['orderid']);
+        pdo_update("weisrc_dish_order_goods",array('status'=>-1),array("orderid"=>$orderid));
+        $order = pdo_fetch("SELECT * FROM ims_weisrc_dish_order WHERE id = :id", array(':id' => $orderid));
+        pdo_update("weisrc_dish_tables",array('status'=>0),array("id"=>$order['tables']));
+        $i=pdo_update("weisrc_dish_order",array('status'=>-1),array("id"=>$orderid));
+        if($i)message("取消成功！");
+    }
 // 确认订单
     public function doMobileConfirmorder() {
 		global $_GPC, $_W;
@@ -1915,9 +1929,6 @@ $orderinfo['zhekou'] = $orderinfo['zhekou']+$song['total'];
         $goods=pdo_update("weisrc_dish_order",array('status'=>1),array("id"=>$orderid));
         
         if($goods)message("操作成功！");
-
-        
-        include $this->template('confirmorder');
     }
 
 	public function doMobileCounthistory() {

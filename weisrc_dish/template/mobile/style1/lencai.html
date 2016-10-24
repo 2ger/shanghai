@@ -30,7 +30,7 @@
     <div class="orders-index-page main-view ng-scope" id="delivery-orders-index">
         {loop $list $items}
         <div class="space-12"></div>
-        <div class="order-item section {$items['status']} ng-scope">
+        <div class="order-item section {$items['change']} ng-scope">
             <a class="list-item">
                 <div class="time ng-binding">下单时间：{php echo date('Y-m-d H:i:s',$items['dateline'])}</div>
             </a>

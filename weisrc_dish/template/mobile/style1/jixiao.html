@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, user-scalable=no">
-<title> 菜品管理</title>
+<title> 员工绩效</title>
 <link data-turbolinks-track="true" href="../addons/weisrc_dish/template//mobile/style1/assets/diandanbao/mui.min.css" media="all" rel="stylesheet">
 <style>
 html,
@@ -170,7 +170,7 @@ body {
         <button type="button" class="mui-left mui-btn-positive mui-btn  mui-btn-nav mui-pull-left">
             <a href="{php echo $this->createMobileUrl('operalist', array(), true)}"> 返回</a>
         </button>
-        <h1 class="mui-center mui-title">菜品管理</h1>
+        <h1 class="mui-center mui-title">员工绩效</h1>
         <button type="button" class="mui-right mui-action-back mui-btn  mui-btn-negative mui-btn-nav mui-pull-right">
             <a href="{php echo $this->createMobileUrl('logout', array(), true)}"> 退出</a>
         </button>
@@ -186,7 +186,7 @@ body {
                         <img class="mui-media-object mui-pull-left head-img" id="head-img" src="http://shanghai.xyj0772.com/attachment/images/1/2016/10/tEfohN55cCofH5KnoDZseCMFOrGa83.png">
                         <div class="mui-media-body">
                             溪雨观 惠南店	
-                            <p class='mui-ellipsis'>员工号:{$user['useracount']}</p>
+                            <!-- <p class='mui-ellipsis'>员工号:{$user['useracount']}</p> -->
                         </div>
                     </a>
                     </li>
@@ -197,22 +197,36 @@ body {
     color: #fff;
 }
                 </style>
+                {loop $users $item}
                 <ul class="mui-table-view">
-                    {loop $list $item}
-                    <li class="{if $item['status']==0}bgred{/if} mui-table-view-cell">
-                    {$item['title']}
-                    {if $item['status']}
-                    <a class="mui-btn mui-btn-primary" href="{php echo $this->createMobileUrl('guqing', array(), true)}&goodsid={$item['id']}&status=0">
-                        沽清</a>
-                    {else} 
-                    <a class="mui-btn mui-btn-positive" href="{php echo $this->createMobileUrl('guqing', array(), true)}&goodsid={$item['id']}&status=1">
-                        上架</a>
-                    {/if} 
 
+                    <li class=" mui-table-view-cell">
+                    {$item['realname']}
+                    <a class="mui-right" style="float:right">ID:{$item['useracount']}</a>
 
                     </li>
-                    {/loop}
+                    <li class=" mui-table-view-cell">
+                    <span style="margin-right: 8px;">上月：</span>
+                    <span style="margin-right: 8px;">正常</span><span class="mui-badge mui-badge-success" style="margin-right: px;" >{$item['normal']['normal']}</span>
+                    <span style="margin-right: 8px;">黄色</span><span class="mui-badge mui-badge-warning" style="margin-right: px;" >{$item['warning']['warning']}</span>
+                    <span style="margin-right: 8px;">黑色</span><span class="mui-badge mui-badge-danger" style="margin-right: px;" >{$item['punish']['punish']}</span>
+                    
+                    </li>
+                    <li class=" mui-table-view-cell">
+                    <span style="margin-right: 8px;">本月：</span>
+                    <span style="margin-right: 8px;">正常</span><span class="mui-badge mui-badge-success" style="margin-right: px;" >{$item['normals']['normal']}</span>
+                    <span style="margin-right: 8px;">黄色</span><span class="mui-badge mui-badge-warning" style="margin-right: px;" >{$item['warnings']['warning']}</span>
+                    <span style="margin-right: 8px;">黑色</span><span class="mui-badge mui-badge-danger" style="margin-right: px;" >{$item['punishs']['punish']}</span>
+                    
+                    </li>
+
                 </ul>
+                {/loop}
+
+                
+                <style>
+.mui-table-view-cell>.mui-badge, .mui-table-view-cell>.mui-btn, .mui-table-view-cell>.mui-switch, .mui-table-view-cell>a>.mui-badge, .mui-table-view-cell>a>.mui-btn, .mui-table-view-cell>a>.mui-switch{position:relative;top:8px;right:0}
+                </style>
             </div>
         </div>
     </div>
